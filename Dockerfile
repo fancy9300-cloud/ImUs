@@ -7,6 +7,7 @@ COPY ["src/ImUs.Web/ImUs.Web.csproj", "src/ImUs.Web/"]
 COPY ["src/ImUs.Application/ImUs.Application.csproj", "src/ImUs.Application/"]
 COPY ["src/ImUs.Infrastructure/ImUs.Infrastructure.csproj", "src/ImUs.Infrastructure/"]
 COPY ["src/ImUs.Domain/ImUs.Domain.csproj", "src/ImUs.Domain/"]
+COPY ["tests/ImUs.Tests/ImUs.Tests.csproj", "tests/ImUs.Tests/"]
 
 # Restore dependencies
 RUN dotnet restore
