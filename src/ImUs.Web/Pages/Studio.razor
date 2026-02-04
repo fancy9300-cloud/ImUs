@@ -1,0 +1,444 @@
+@page "/studio"
+@using ImUs.Domain.Entities
+
+<PageTitle>ImUs Studio - Flow Builder</PageTitle>
+
+<div class="studio-container">
+    @* --- TOOLBAR --- *@
+    <div class="studio-toolbar d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-0 fw-bold">Nuovo Progetto AI</h4>
+            <span class="text-muted small">Flow Builder v1.1 <span class="badge bg-success-subtle text-success ms-2">BETA</span></span>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-white"><span class="bi bi-play-circle me-2"></span>Test Run</button>
+            <button class="btn btn-primary"><span class="bi bi-save me-2"></span>Salva Progetto</button>
+        </div>
+    </div>
+
+    @* --- CANVAS --- *@
+    <div class="flow-canvas d-flex align-items-center justify-content-start overflow-auto">
+        
+        @* 1. START / TRIGGER NODE *@
+        <div class="flow-node trigger-node @(SelectedTrigger == null ? "pulse-animation" : "")" @onclick="() => OpenModal(NodeType.Trigger)">
+            <div class="node-icon bg-danger-soft">
+                <span class="bi bi-lightning-charge-fill text-danger"></span>
+            </div>
+            <div class="node-content">
+                <div class="node-title">Hardware Trigger</div>
+                @if (SelectedTrigger == null)
+                {
+                    <div class="node-action">
+                        <span class="bi bi-plus-circle me-1"></span> Seleziona Hardware
+                    </div>
+                }
+                else
+                {
+                    <div class="node-selected">
+                        <strong>@SelectedTrigger.Name</strong>
+                        <div class="small text-muted">@SelectedTrigger.Event</div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* LINE & ADD BUTTON *@
+        <div class="flow-connector">
+            <div class="line"></div>
+            @if (Modules.Count == 0)
+            {
+                 <button class="btn-add-module" @onclick="() => OpenModal(NodeType.Module)">
+                    <span class="bi bi-plus-lg"></span>
+                </button>
+            }
+        </div>
+
+        @* 2. DYNAMIC MODULES *@
+        @foreach (var module in Modules)
+        {
+            <div class="flow-node module-node">
+                <div class="node-icon @GetBgClass(module.Type)">
+                    <span class="bi @(module.Icon) @GetTextClass(module.Type)"></span>
+                </div>
+                <div class="node-content">
+                    <div class="node-title">@module.Type</div>
+                    <div class="node-selected">
+                        <strong>@module.Name</strong>
+                        @if(!string.IsNullOrEmpty(module.Description)) {
+                             <div class="small text-muted text-truncate" style="max-width:150px;">@module.Description</div>
+                        }
+                    </div>
+                </div>
+                <button class="btn-remove-node" @onclick="() => RemoveModule(module)">
+                    <span class="bi bi-x"></span>
+                </button>
+            </div>
+
+            @* CONNECTOR AFTER MODULE *@
+            <div class="flow-connector">
+                <div class="line"></div>
+                <button class="btn-add-module" @onclick="() => OpenModal(NodeType.Module)">
+                    <span class="bi bi-plus-lg"></span>
+                </button>
+            </div>
+        }
+
+        @* 3. END GHOST NODE *@
+        <div class="flow-node ghost-node">
+            <div class="node-icon">
+                <span class="bi bi-flag"></span>
+            </div>
+            <div class="node-content">
+                <div class="text-muted small">Fine Flusso</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@* --- MODAL SELECTION --- *@
+@if (IsModalOpen)
+{
+    <div class="modal-backdrop fade show"></div>
+    <div class="modal fade show d-block" tabindex="-1">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg modal-dark-glass">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-bold">
+                        @if(CurrentStep == NodeType.Trigger) { <text>Seleziona Start Trigger</text> }
+                        else { <text>Aggiungi Modulo</text> }
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" @onclick="CloseModal"></button>
+                </div>
+                
+                <div class="modal-body p-0">
+                    @* TABS *@
+                    <div class="d-flex text-center border-bottom border-secondary mb-3 mt-3">
+                        <div class="flex-fill p-3 tab-item @(ActiveCategory == "Hardware" ? "active" : "")" 
+                             @onclick="@(() => SetCategory("Hardware"))">
+                            <span class="bi bi-cpu me-2"></span>Hardware
+                        </div>
+                        <div class="flex-fill p-3 tab-item @(ActiveCategory == "AI" ? "active" : "")" 
+                             @onclick="@(() => SetCategory("AI"))">
+                            <span class="bi bi-magic me-2"></span>AI Agent
+                        </div>
+                        <div class="flex-fill p-3 tab-item @(ActiveCategory == "Logic" ? "active" : "")" 
+                             @onclick="@(() => SetCategory("Logic"))">
+                            <span class="bi bi-code-square me-2"></span>Logic & API
+                        </div>
+                    </div>
+
+                    @* SEARCH BAR *@
+                    <div class="px-4 mb-3">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><span class="bi bi-search"></span></span>
+                            <input type="text" class="form-control bg-dark border-secondary text-white" placeholder="Cerca moduli..." 
+                                   @bind="SearchQuery" @bind:event="oninput" />
+                        </div>
+                    </div>
+
+                    @* OPTIONS GRID *@
+                    <div class="p-4 pt-1" style="max-height: 400px; overflow-y: auto;">
+                        <div class="row g-3">
+                            @foreach (var opt in FilteredOptions)
+                            {
+                                <div class="col-md-4">
+                                    <div class="card h-100 option-card @(opt.Type == "AI" ? "border-purple" : "")" 
+                                         @onclick="@(() => SelectOption(opt))">
+                                        <div class="card-body text-center">
+                                            <span class="bi @opt.Icon display-6 @GetTextClass(opt.Type) mb-3 d-block"></span>
+                                            <h6 class="text-white">@opt.Name</h6>
+                                            <p class="small text-muted">@opt.Description</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (!FilteredOptions.Any())
+                            {
+                                <div class="col-12 text-center text-muted py-5">
+                                    <span class="bi bi-emoji-frown display-4 d-block mb-3"></span>
+                                    Nessun modulo trovato per "@SearchQuery" in @ActiveCategory.
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    /* LOCAL STYLES FOR STUDIO */
+    .studio-container {
+        height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .flow-canvas {
+        background-color: var(--card-bg); 
+        background-image: radial-gradient(rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+        flex-grow: 1;
+        border-radius: 16px;
+        padding: 4rem;
+        position: relative;
+    }
+
+    [data-theme="light"] .flow-canvas {
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+    }
+
+    .flow-node {
+        background: var(--card-bg);
+        border: 2px solid var(--card-border);
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        flex-shrink: 0;
+        z-index: 2;
+        transition: transform 0.2s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        cursor: pointer;
+    }
+    
+    .flow-node:hover {
+        transform: scale(1.05);
+        border-color: var(--accent-primary);
+    }
+    
+    .pulse-animation {
+        animation: pulse-border 2s infinite;
+    }
+
+    @@keyframes pulse-border {
+        0% { box-shadow: 0 0 0 0 rgba(76, 111, 255, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(76, 111, 255, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(76, 111, 255, 0); }
+    }
+
+    .node-icon { font-size: 2rem; }
+
+    .node-content {
+        position: absolute;
+        top: 110px;
+        width: 180px;
+        text-align: center;
+        background: var(--card-bg);
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid var(--card-border);
+        z-index: 3;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .node-title { font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 4px; }
+    .node-selected strong { display: block; color: var(--text-primary); }
+
+    .flow-connector {
+        display: flex;
+        align-items: center;
+        width: 80px;
+        position: relative;
+        justify-content: center;
+    }
+
+    .line {
+        height: 3px;
+        background: var(--card-border);
+        width: 100%;
+        position: absolute;
+        z-index: 1;
+    }
+
+    .btn-add-module {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 2px solid var(--card-border);
+        background: var(--card-bg);
+        color: var(--text-primary);
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-add-module:hover {
+        background: var(--accent-primary);
+        border-color: var(--accent-primary);
+        color: white;
+        transform: scale(1.2);
+    }
+
+    /* Option Cards */
+    .option-card {
+        cursor: pointer;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid var(--card-border);
+        transition: all 0.2s;
+    }
+    .option-card:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: var(--accent-primary);
+        transform: translateY(-2px);
+    }
+    
+    .border-purple { border-color: #a78bfa !important; }
+
+    /* Colors */
+    .text-purple { color: #a78bfa !important; }
+    .bg-purple-soft { background-color: rgba(167, 139, 250, 0.2); }
+    .bg-danger-soft { background-color: rgba(248, 113, 113, 0.2); }
+    .bg-primary-soft { background-color: rgba(59, 130, 246, 0.2); }
+    .bg-warning-soft { background-color: rgba(251, 191, 36, 0.2); }
+
+    .node-action { 
+        color: var(--accent-primary); font-weight: bold; cursor: pointer; padding: 4px;
+    }
+    
+    .btn-remove-node {
+        position: absolute;
+        top:-5px; right:-5px;
+        width: 24px; height: 24px;
+        border-radius: 50%;
+        background: #ef4444;
+        color: white;
+        border:none;
+        display: none;
+        align-items:center; justify-content:center;
+    }
+    .flow-node:hover .btn-remove-node { display: flex; }
+    
+    .modal-dark-glass {
+        background: #1e203a; 
+        border: 1px solid var(--card-border);
+        color: white;
+    }
+    
+    .tab-item {
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: all 0.2s;
+        border-bottom: 3px solid transparent;
+    }
+    .tab-item:hover { color:white; background: rgba(255,255,255,0.05); }
+    .tab-item.active {
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
+    }
+</style>
+
+@code {
+    private enum NodeType { Trigger, Module }
+    private bool IsModalOpen = false;
+    private NodeType CurrentStep = NodeType.Trigger;
+    private string ActiveCategory = "Hardware";
+    private string SearchQuery = "";
+
+    private StudioTriggerModel? SelectedTrigger;
+    private List<StudioModuleModel> Modules = new();
+
+    private void OpenModal(NodeType type)
+    {
+        CurrentStep = type;
+        // Default category based on step
+        if (CurrentStep == NodeType.Trigger) ActiveCategory = "Hardware";
+        else ActiveCategory = "Logic"; 
+        
+        SearchQuery = "";
+        IsModalOpen = true;
+    }
+
+    private void CloseModal()
+    {
+        IsModalOpen = false;
+    }
+
+    private void SetCategory(string category)
+    {
+        ActiveCategory = category;
+    }
+
+    private void SelectOption(StudioOptionModel opt)
+    {
+        if (CurrentStep == NodeType.Trigger)
+        {
+            SelectedTrigger = new StudioTriggerModel(opt.Name, opt.Description, opt.Type);
+        }
+        else
+        {
+            bool isAI = opt.Type == "AI";
+            Modules.Add(new StudioModuleModel(opt.Type, opt.Name, opt.Description, isAI, opt.Icon));
+        }
+        CloseModal();
+    }
+    
+    private void RemoveModule(StudioModuleModel m) {
+        Modules.Remove(m);
+    }
+
+    /* --- DATA & LOGIC --- */
+
+    private List<StudioOptionModel> AllOptions = new()
+    {
+        // Hardware - Synced with Catalogo.razor
+        new("Hardware", "Camera", "AXIS P3265-LVE", "Telecamera 2MP con deep learning per people counting", "bi-camera-video"),
+        new("Hardware", "Camera", "AXIS M3088-V", "Telecamera panoramica 360° per copertura corsie", "bi-camera-video"),
+        new("Hardware", "Robot", "BellaBot", "Robot delivery con navigazione autonoma", "bi-robot"),
+        new("Hardware", "Robot", "CC1 Cleaning Robot", "Robot pulizia autonomo per GDO", "bi-robot"),
+        new("Hardware", "Sensor", "STS40", "Sensore temperatura per banchi frigo (±0.1°C)", "bi-thermometer-half"),
+        new("Hardware", "Sensor", "SCD41", "Sensore CO2, temperatura e umidità", "bi-cloud"),
+        new("Hardware", "Label", "VusionRail", "Etichetta elettronica e-ink da scaffale", "bi-tag"),
+        new("Hardware", "Label", "VusionSpot", "Display promozionale digitale da scaffale", "bi-tag"),
+        new("Hardware", "Edge", "Jetson Orin Nano", "Edge computing per AI on-premise (40 TOPS)", "bi-gpu-card"),
+        new("Hardware", "Edge", "Jetson AGX Orin", "Edge computing multi-stream (275 TOPS)", "bi-gpu-card"),
+        new("Hardware", "Display", "Testata Digitale Visiospot", "LED wall + camera per età/genere/dwell time", "bi-display"),
+        
+        // AI
+        new("AI", "AI", "Vision Agent", "Analizza immagini (es: conta persone, controlla divise)", "bi-stars"),
+        new("AI", "AI", "Data Analyst", "Analizza trend dati (es: predizione stock)", "bi-graph-up-arrow"),
+        new("AI", "AI", "Text Extractor", "Estrae testo da documenti o etichette", "bi-file-text"),
+
+        // Logic
+        new("Logic", "API", "HTTP Request", "Chiama un servizio esterno (REST)", "bi-cloud-upload"),
+        new("Logic", "Notification", "Email Alert", "Invia mail al manager", "bi-envelope"),
+        new("Logic", "Database", "Log Event", "Salva evento nel DB", "bi-database"),
+        new("Logic", "Control", "Delay", "Attendi X secondi", "bi-clock"),
+        new("Logic", "Control", "If/Else", "Ramificazione condizionale", "bi-diagram-3")
+    };
+
+    private IEnumerable<StudioOptionModel> FilteredOptions => 
+        AllOptions
+            .Where(o => o.Category == ActiveCategory)
+            .Where(o => string.IsNullOrEmpty(SearchQuery) || 
+                        o.Name.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) ||
+                        o.Description.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase));
+
+    private string GetBgClass(string type) => type switch {
+        "AI" => "bg-purple-soft",
+        "Hardware" => "bg-danger-soft",
+        "Camera" => "bg-danger-soft",
+        "Sensor" => "bg-warning-soft",
+        _ => "bg-primary-soft"
+    };
+
+    private string GetTextClass(string type) => type switch {
+        "AI" => "text-purple",
+        "Hardware" => "text-danger",
+        "Camera" => "text-danger",
+        "Sensor" => "text-warning",
+        _ => "text-primary"
+    };
+
+    // Models
+    record StudioTriggerModel(string Name, string Event, string Type);
+    record StudioModuleModel(string Type, string Name, string Description, bool IsAI, string Icon);
+    record StudioOptionModel(string Category, string Type, string Name, string Description, string Icon);
+}

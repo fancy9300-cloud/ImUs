@@ -1,117 +1,64 @@
+@page "/progetti"
 @page "/marketplace"
 
-<PageTitle>Marketplace - ImUs</PageTitle>
+<PageTitle>Progetti - ImUs</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="mb-0">Marketplace</h3>
+    <div>
+        <h3 class="mb-0">Progetti Attivi</h3>
+        <p class="text-muted mb-0 small">Trova progetti IoT/AI da sviluppare o pubblica il tuo</p>
+    </div>
     <button class="btn btn-primary">+ Pubblica Progetto</button>
 </div>
 
-<ul class="nav nav-tabs mb-4">
-    <li class="nav-item">
-        <a class="nav-link @(_tab == "projects" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "projects"'>Progetti Attivi</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(_tab == "devs" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "devs"'>Sviluppatori</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(_tab == "enterprise" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "enterprise"'>Enterprise (Team ImUs)</a>
-    </li>
-</ul>
-
-@if (_tab == "projects")
-{
-    <div class="row">
-        @foreach (var p in _projects)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <span class="badge bg-@p.StatusColor mb-2">@p.Status</span>
-                            <span class="text-muted small">@p.Vertical</span>
-                        </div>
-                        <h5 class="card-title">@p.Title</h5>
-                        <p class="card-text text-muted">@p.Description</p>
-                        <div class="d-flex flex-wrap gap-1 mb-3">
-                            @foreach (var tag in p.Tags)
-                            {
-                                <span class="badge bg-light text-dark border">@tag</span>
-                            }
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">@GetPricingBadge(p.Budget)</span>
-                            <span class="text-muted small">@p.Proposals proposte</span>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <button class="btn btn-sm btn-outline-primary w-100">Dettagli</button>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}
-else if (_tab == "devs")
-{
-    <div class="row">
-        @foreach (var d in _developers)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center">
-                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">
-                            @d.Initials
-                        </div>
-                        <h5>@d.Name</h5>
-                        <p class="text-muted small">@d.Specialty</p>
-                        <div class="d-flex justify-content-center gap-1 mb-2">
-                            @foreach (var s in d.Skills)
-                            {
-                                <span class="badge bg-light text-dark border">@s</span>
-                            }
-                        </div>
-                        <div class="d-flex justify-content-around text-center mt-3">
-                            <div><strong>@d.Projects</strong><br /><small class="text-muted">Progetti</small></div>
-                            <div><strong>@d.Rating</strong><br /><small class="text-muted">Rating</small></div>
-                            <div><strong>@d.Rate</strong><br /><small class="text-muted">/ora</small></div>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-transparent">
-                        <button class="btn btn-sm btn-outline-primary w-100">Profilo</button>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-}
-else
-{
-    <div class="card shadow-sm">
-        <div class="card-body">
-            <h5>Team Interno ImUs</h5>
-            <p>Il team enterprise gestisce progetti complessi end-to-end. Ogni progetto genera template riutilizzabili che vanno sulla piattaforma.</p>
-            <div class="row mt-4">
-                @foreach (var ep in _enterpriseProjects)
-                {
-                    <div class="col-md-6 mb-3">
-                        <div class="card border-@ep.Color">
-                            <div class="card-body">
-                                <span class="badge bg-@ep.Color mb-2">@ep.Phase</span>
-                                <h6>@ep.Name</h6>
-                                <p class="small text-muted mb-2">@ep.Client</p>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-@ep.Color" style="width: @ep.Progress%"></div>
-                                </div>
-                                <small class="text-muted">@ep.Progress% completato</small>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="input-group">
+            <span class="input-group-text bg-white"><span class="bi bi-search"></span></span>
+            <input type="text" class="form-control" placeholder="Cerca progetti per keyword, verticale o tecnologia..." />
         </div>
     </div>
-}
+    <div class="col-md-4">
+        <select class="form-select">
+            <option value="">Tutti i verticali</option>
+            <option>GDO</option>
+            <option>Retail</option>
+            <option>Hospitality</option>
+            <option>Logistica</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var p in _projects)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span class="badge bg-@p.StatusColor mb-2">@p.Status</span>
+                        <span class="text-muted small">@p.Vertical</span>
+                    </div>
+                    <h5 class="card-title">@p.Title</h5>
+                    <p class="card-text text-muted">@p.Description</p>
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        @foreach (var tag in p.Tags)
+                        {
+                            <span class="badge bg-light text-dark border">@tag</span>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">@GetPricingBadge(p.Budget)</span>
+                        <span class="text-muted small">@p.Proposals proposte</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <button class="btn btn-sm btn-outline-primary w-100">Dettagli</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @code {
     private string _tab = "projects";

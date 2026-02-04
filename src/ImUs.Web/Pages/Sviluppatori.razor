@@ -2,200 +2,308 @@
 
 <PageTitle>Area Sviluppatori - ImUs</PageTitle>
 
-<h3 class="mb-4">Area Sviluppatori</h3>
-
-<!-- Stats -->
-<div class="row mb-4">
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
-                <h2 class="fw-bold text-primary">47</h2>
-                <small class="text-muted">Sviluppatori Registrati</small>
-            </div>
-        </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0">Area Sviluppatori</h3>
+        <p class="text-muted mb-0 small">Developer, team enterprise e collaborazioni universitarie</p>
     </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
-                <h2 class="fw-bold text-success">18</h2>
-                <small class="text-muted">Progetti Completati</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
-                <h2 class="fw-bold text-warning">6</h2>
-                <small class="text-muted">Progetti Attivi</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card border-0 shadow-sm text-center">
-            <div class="card-body">
-                <h2 class="fw-bold text-info">&euro;75</h2>
-                <small class="text-muted">Tariffa Media /ora</small>
-            </div>
-        </div>
-    </div>
+    <button class="btn btn-primary">Diventa Partner</button>
 </div>
 
-<!-- Plans -->
-<h4 class="mb-3">Piani Sviluppatore</h4>
-<div class="row mb-5">
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-header bg-light text-center">
-                <h5 class="mb-0">Free</h5>
-            </div>
-            <div class="card-body text-center">
-                <h2 class="fw-bold">&euro;0<small class="text-muted fw-normal">/mese</small></h2>
-                <hr />
-                <ul class="list-unstyled text-start">
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso marketplace</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> 3 proposte/mese</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Profilo base</li>
-                    <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Template premium</li>
-                    <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> API hardware sandbox</li>
-                    <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Supporto prioritario</li>
-                </ul>
-                <button class="btn btn-outline-primary w-100">Inizia Gratis</button>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100 border-primary">
-            <div class="card-header bg-primary text-white text-center">
-                <h5 class="mb-0">Pro</h5>
-            </div>
-            <div class="card-body text-center">
-                <h2 class="fw-bold">&euro;50<small class="text-muted fw-normal">/mese</small></h2>
-                <hr />
-                <ul class="list-unstyled text-start">
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso marketplace</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Proposte illimitate</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Profilo verificato</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> 5 template premium</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> API hardware sandbox</li>
-                    <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Supporto prioritario</li>
-                </ul>
-                <button class="btn btn-primary w-100">Abbonati</button>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-header bg-dark text-white text-center">
-                <h5 class="mb-0">Enterprise</h5>
-            </div>
-            <div class="card-body text-center">
-                <h2 class="fw-bold">&euro;200<small class="text-muted fw-normal">/mese</small></h2>
-                <hr />
-                <ul class="list-unstyled text-start">
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Tutto di Pro</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Tutti i template</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Hardware fisico in loan</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso progetti enterprise</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Supporto prioritario</li>
-                    <li class="mb-2"><span class="bi bi-check text-success"></span> Badge certificato ImUs</li>
-                </ul>
-                <button class="btn btn-dark w-100">Contattaci</button>
-            </div>
-        </div>
-    </div>
-</div>
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "freelance" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "freelance"'>
+            <span class="bi bi-person me-1"></span>Freelance
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "enterprise" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "enterprise"'>
+            <span class="bi bi-building me-1"></span>Enterprise (Team ImUs)
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "university" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "university"'>
+            <span class="bi bi-mortarboard me-1"></span>Universita
+        </a>
+    </li>
+</ul>
 
-<!-- AI Development Option -->
-<h4 class="mb-3">Modalità di Sviluppo</h4>
-<div class="row mb-5">
-    <div class="col-md-8">
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6 border-end">
-                        <div class="text-center">
-                            <div class="display-5 text-primary mb-2">👨‍💻</div>
-                            <h5>Sviluppatore Umano</h5>
-                            <p class="text-muted small">Developer verificati dalla community per progetti complessi</p>
-                            <ul class="list-unstyled text-start small">
-                                <li>✓ Qualità enterprise garantita</li>
-                                <li>✓ Supporto e manutenzione</li>
-                                <li>✓ Integrazionie legacy complesse</li>
-                                <li>✓ Customizzazioni avanzate</li>
-                            </ul>
-                            <span class="badge bg-primary">Raccomandato</span>
+@if (_tab == "freelance")
+{
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h2 class="fw-bold text-primary">47</h2>
+                    <small class="text-muted">Sviluppatori Registrati</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h2 class="fw-bold text-success">18</h2>
+                    <small class="text-muted">Progetti Completati</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h2 class="fw-bold text-warning">6</h2>
+                    <small class="text-muted">Progetti Attivi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body">
+                    <h2 class="fw-bold text-info">&euro;75</h2>
+                    <small class="text-muted">Tariffa Media /ora</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mb-3">Piani Sviluppatore</h4>
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header bg-light text-center">
+                    <h5 class="mb-0">Free</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="fw-bold">&euro;0<small class="text-muted fw-normal">/mese</small></h2>
+                    <hr />
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso marketplace</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> 3 proposte/mese</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Profilo base</li>
+                        <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Template premium</li>
+                        <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> API hardware sandbox</li>
+                        <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Supporto prioritario</li>
+                    </ul>
+                    <button class="btn btn-outline-primary w-100">Inizia Gratis</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-primary">
+                <div class="card-header bg-primary text-white text-center">
+                    <h5 class="mb-0">Pro</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="fw-bold">&euro;50<small class="text-muted fw-normal">/mese</small></h2>
+                    <hr />
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso marketplace</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Proposte illimitate</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Profilo verificato</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> 5 template premium</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> API hardware sandbox</li>
+                        <li class="mb-2 text-muted"><span class="bi bi-x text-danger"></span> Supporto prioritario</li>
+                    </ul>
+                    <button class="btn btn-primary w-100">Abbonati</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white text-center">
+                    <h5 class="mb-0">Enterprise</h5>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="fw-bold">&euro;200<small class="text-muted fw-normal">/mese</small></h2>
+                    <hr />
+                    <ul class="list-unstyled text-start">
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Tutto di Pro</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Tutti i template</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Hardware fisico in loan</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Accesso progetti enterprise</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Supporto prioritario</li>
+                        <li class="mb-2"><span class="bi bi-check text-success"></span> Badge certificato ImUs</li>
+                    </ul>
+                    <button class="btn btn-dark w-100">Contattaci</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mb-3">Modalita di Sviluppo</h4>
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 border-end">
+                            <div class="text-center">
+                                <div class="display-5 text-primary mb-2"><span class="bi bi-person-workspace"></span></div>
+                                <h5>Sviluppatore Umano</h5>
+                                <p class="text-muted small">Developer verificati dalla community per progetti complessi</p>
+                                <ul class="list-unstyled text-start small">
+                                    <li class="mb-1"><span class="bi bi-check text-success"></span> Qualita enterprise garantita</li>
+                                    <li class="mb-1"><span class="bi bi-check text-success"></span> Supporto e manutenzione</li>
+                                    <li class="mb-1"><span class="bi bi-check text-success"></span> Integrazioni legacy complesse</li>
+                                    <li class="mb-1"><span class="bi bi-check text-success"></span> Customizzazioni avanzate</li>
+                                </ul>
+                                <span class="badge bg-primary">Raccomandato</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="text-center">
-                            <div class="display-5 text-muted mb-2">🤖</div>
-                            <h5 class="text-muted">AI-Assisted</h5>
-                            <p class="text-muted small">Generazione codice automatica per progetti semplici</p>
-                            <ul class="list-unstyled text-start small text-muted">
-                                <li>✓ Veloce (minuti)</li>
-                                <li>✓ Progetti standard</li>
-                                <li>⚠️ Review necessaria</li>
-                                <li>⚠️ Limitato a template</li>
-                            </ul>
-                            <span class="badge bg-secondary">Beta</span>
+                        <div class="col-md-6">
+                            <div class="text-center">
+                                <div class="display-5 text-muted mb-2"><span class="bi bi-robot"></span></div>
+                                <h5 class="text-muted">AI-Assisted</h5>
+                                <p class="text-muted small">Generazione codice automatica per progetti semplici</p>
+                                <ul class="list-unstyled text-start small text-muted">
+                                    <li class="mb-1"><span class="bi bi-check"></span> Veloce (minuti)</li>
+                                    <li class="mb-1"><span class="bi bi-check"></span> Progetti standard</li>
+                                    <li class="mb-1"><span class="bi bi-exclamation-triangle"></span> Review necessaria</li>
+                                    <li class="mb-1"><span class="bi bi-exclamation-triangle"></span> Limitato a template</li>
+                                </ul>
+                                <span class="badge bg-secondary">Beta</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-light border-0 h-100">
-            <div class="card-body">
-                <h6>💡 Quando Usare AI?</h6>
-                <p class="small text-muted">L'AI-Assisted è ideale per:</p>
-                <ul class="small text-muted">
-                    <li>Prototipi veloci</li>
-                    <li>PoC e demo</li>
-                    <li>Progetti standard da template</li>
-                </ul>
-                <p class="small text-muted mb-0"><strong>Per progetti enterprise, affidati ai nostri sviluppatori verificati.</strong></p>
+        <div class="col-md-4">
+            <div class="card bg-light border-0 h-100">
+                <div class="card-body">
+                    <h6><span class="bi bi-lightbulb text-warning"></span> Quando Usare AI?</h6>
+                    <p class="small text-muted">L'AI-Assisted e ideale per:</p>
+                    <ul class="small text-muted">
+                        <li>Prototipi veloci</li>
+                        <li>PoC e demo</li>
+                        <li>Progetti standard da template</li>
+                    </ul>
+                    <p class="small text-muted mb-0"><strong>Per progetti enterprise, affidati ai nostri sviluppatori verificati.</strong></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Leaderboard -->
-<h4 class="mb-3">Top Sviluppatori</h4>
-<div class="card shadow-sm">
-    <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>#</th>
-                    <th>Sviluppatore</th>
-                    <th>Specialita</th>
-                    <th>Progetti</th>
-                    <th>Rating</th>
-                    <th>Piano</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{ var i = 1; }
-                @foreach (var d in _leaderboard)
-                {
+    <h4 class="mb-3">Top Sviluppatori</h4>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
                     <tr>
-                        <td><strong>@i</strong></td>
-                        <td>@d.Name</td>
-                        <td>@d.Specialty</td>
-                        <td>@d.Projects</td>
-                        <td>@d.Rating</td>
-                        <td><span class="badge bg-@d.PlanColor">@d.Plan</span></td>
+                        <th>#</th>
+                        <th>Sviluppatore</th>
+                        <th>Specialita</th>
+                        <th>Progetti</th>
+                        <th>Rating</th>
+                        <th>Piano</th>
                     </tr>
-                    i++;
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @{ var i = 1; }
+                    @foreach (var d in _leaderboard)
+                    {
+                        <tr>
+                            <td><strong>@i</strong></td>
+                            <td>@d.Name</td>
+                            <td>@d.Specialty</td>
+                            <td>@d.Projects</td>
+                            <td>@d.Rating</td>
+                            <td><span class="badge bg-@d.PlanColor">@d.Plan</span></td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
+}
+else if (_tab == "enterprise")
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5>Team Interno ImUs</h5>
+            <p>Il team enterprise gestisce progetti complessi end-to-end. Ogni progetto genera template riutilizzabili che vanno sulla piattaforma.</p>
+            <div class="row mt-4">
+                @foreach (var ep in _enterpriseProjects)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-@ep.Color">
+                            <div class="card-body">
+                                <span class="badge bg-@ep.Color mb-2">@ep.Phase</span>
+                                <h6>@ep.Name</h6>
+                                <p class="small text-muted mb-2">@ep.Client</p>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-@ep.Color" style="width: @(ep.Progress)%"></div>
+                                </div>
+                                <small class="text-muted">@ep.Progress% completato</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else if (_tab == "university")
+{
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5><span class="bi bi-mortarboard text-primary me-2"></span>Collaborazioni Universitarie</h5>
+                    <p class="text-muted">Collaboriamo con universita italiane ed europee per progetti di ricerca applicata nel campo IoT e AI per il retail.</p>
+                    <ul class="small mb-3">
+                        <li><strong>Team di ricerca:</strong> Accesso a progetti R&amp;D avanzati</li>
+                        <li><strong>Studenti:</strong> Stage e tesi su problemi reali</li>
+                        <li><strong>Professori:</strong> Consulenza e advisory board</li>
+                    </ul>
+                </div>
+                <div class="col-md-4 text-center">
+                    <span class="bi bi-building display-1 text-muted opacity-25"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h5 class="mb-3">Partner Universitari</h5>
+    <div class="row">
+        @foreach (var uni in _universities)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h6>@uni.Name</h6>
+                        <p class="small text-muted mb-2">@uni.Department</p>
+                        <div class="d-flex gap-1 flex-wrap mb-2">
+                            @foreach (var area in uni.ResearchAreas)
+                            {
+                                <span class="badge bg-light text-dark border">@area</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-@uni.StatusColor">@uni.Status</span>
+                            <small class="text-muted">@uni.Students studenti</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="card bg-light border-0 mt-4">
+        <div class="card-body text-center">
+            <h5>Sei un'universita o un centro di ricerca?</h5>
+            <p class="text-muted">Proponi una collaborazione per accedere a dati reali, hardware IoT e progetti di ricerca applicata.</p>
+            <button class="btn btn-primary">Proponi Collaborazione</button>
+        </div>
+    </div>
+}
 
 @code {
+    private string _tab = "freelance";
+
     record LeaderboardEntry(string Name, string Specialty, int Projects, string Rating, string Plan, string PlanColor);
+    record EnterpriseProject(string Name, string Client, string Phase, string Color, int Progress);
+    record UniversityPartner(string Name, string Department, string[] ResearchAreas, string Status, string StatusColor, int Students);
 
     private List<LeaderboardEntry> _leaderboard = new()
     {
@@ -207,5 +315,23 @@
         new("Stefano Conti", "Embedded", 18, "4.6", "Pro", "primary"),
         new("Davide Galli", "Cloud/DevOps", 12, "4.5", "Free", "secondary"),
         new("Chiara Lombardi", "UI/UX + Frontend", 8, "4.4", "Free", "secondary")
+    };
+
+    private List<EnterpriseProject> _enterpriseProjects = new()
+    {
+        new("Smart Store Conad Cesena", "Conad", "In Produzione", "success", 85),
+        new("Pilot Retail Analytics", "Coop", "Sviluppo", "primary", 40),
+        new("Warehouse IoT Platform", "DHL Italy", "Discovery", "warning", 15),
+        new("Hotel Automation Suite", "Marriott IT", "Proposta", "info", 5)
+    };
+
+    private List<UniversityPartner> _universities = new()
+    {
+        new("Politecnico di Milano", "Dip. Elettronica e Informazione", new[]{"Computer Vision", "Edge AI", "IoT"}, "Attivo", "success", 12),
+        new("Universita di Bologna", "Dip. Informatica", new[]{"Machine Learning", "Data Analytics"}, "Attivo", "success", 8),
+        new("Universita di Padova", "Dip. Ingegneria", new[]{"Robotics", "Embedded Systems"}, "In trattativa", "warning", 0),
+        new("Politecnico di Torino", "Dip. Automatica", new[]{"Control Systems", "Industry 4.0"}, "Proposto", "info", 0),
+        new("Universita di Trento", "DISI", new[]{"AI", "NLP", "Retail Analytics"}, "Attivo", "success", 5),
+        new("Sapienza Roma", "Dip. Ingegneria Informatica", new[]{"Big Data", "Cloud Computing"}, "In trattativa", "warning", 0)
     };
 }

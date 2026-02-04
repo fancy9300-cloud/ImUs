@@ -12,17 +12,40 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h3 class="mb-0">Caso Studio: GDO</h3>
-        <small class="text-muted">Smart Store Conad Cesena - Progetto Enterprise Live</small>
+        <small class="text-muted">
+            @if (_viewMode == "cliente")
+            {
+                <text>Smart Store Conad Cesena - Vista Cliente Finale</text>
+            }
+            else
+            {
+                <text>System Integrator - Gestione Multi-Cliente</text>
+            }
+        </small>
     </div>
-    <span class="badge bg-success fs-6">LIVE</span>
+    <div class="d-flex align-items-center gap-3">
+        <!-- View Toggle -->
+        <div class="btn-group" role="group">
+            <button type="button" class="btn btn-sm @(_viewMode == "cliente" ? "btn-primary" : "btn-outline-secondary")" 
+                    @onclick='() => _viewMode = "cliente"'>
+                <span class="bi bi-shop me-1"></span>Cliente Finale
+            </button>
+            <button type="button" class="btn btn-sm @(_viewMode == "integrator" ? "btn-primary" : "btn-outline-secondary")" 
+                    @onclick='() => _viewMode = "integrator"'>
+                <span class="bi bi-diagram-3 me-1"></span>System Integrator
+            </button>
+        </div>
+        <span class="badge bg-success fs-6">LIVE</span>
+    </div>
 </div>
 
 @if (_loading)
 {
     <p>Caricamento...</p>
 }
-else
+else if (_viewMode == "cliente")
 {
+    <!-- VISTA CLIENTE FINALE -->
     <!-- KPI Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -87,7 +110,7 @@ else
                     <a href="/casistudio/gdo/devices" class="text-decoration-none small">Vedi tutti</a>
                 </div>
                 <div class="card-body p-0">
-                    <table class="table table-sm mb-0">
+                    <table class="table table-sm table-hover mb-0">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -98,8 +121,8 @@ else
                         <tbody>
                             @foreach (var d in _devices)
                             {
-                                <tr>
-                                    <td>@d.Name</td>
+                                <tr style="cursor: pointer;" @onclick="() => SelectDevice(d)">
+                                    <td><span class="bi bi-@GetDeviceIcon(d.Type) me-1"></span>@d.Name</td>
                                     <td>@d.Type</td>
                                     <td>
                                         @if (d.IsOnline)
@@ -197,9 +220,336 @@ else
             </div>
         </div>
     </div>
+
+    <!-- Device Analytics Modal -->
+    @if (_selectedDevice is not null)
+    {
+        <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <span class="bi bi-@GetDeviceIcon(_selectedDevice.Type) me-2"></span>
+                            @_selectedDevice.Name
+                        </h5>
+                        <button type="button" class="btn-close" @onclick="CloseModal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Tipo:</strong> @_selectedDevice.Type</p>
+                                <p class="mb-1"><strong>Stato:</strong> 
+                                    @if (_selectedDevice.IsOnline)
+                                    {
+                                        <span class="badge bg-success">Online</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Offline</span>
+                                    }
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Ultimo dato:</strong> @DateTime.Now.AddMinutes(-2).ToString("HH:mm:ss")</p>
+                                <p class="mb-1"><strong>Uptime:</strong> 99.7%</p>
+                            </div>
+                        </div>
+                        <hr />
+                        
+                        @* Analytics specifiche per tipo *@
+                        @if (_selectedDevice.Type == DeviceType.Camera)
+                        {
+                            <h6><span class="bi bi-camera-video me-1"></span>People Counting Analytics</h6>
+                            <div class="row mt-3">
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-primary">847</h3>
+                                    <small class="text-muted">Visitatori Oggi</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-success">+12%</h3>
+                                    <small class="text-muted">vs Ieri</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-info">3.2 min</h3>
+                                    <small class="text-muted">Dwell Time Medio</small>
+                                </div>
+                            </div>
+                            <div class="card bg-light mt-3">
+                                <div class="card-body">
+                                    <h6>Trend Orario</h6>
+                                    <div class="d-flex align-items-end gap-1" style="height: 80px;">
+                                        @foreach (var h in new[] { 20, 35, 45, 60, 80, 95, 100, 90, 75, 55, 40, 25 })
+                                        {
+                                            <div class="bg-primary flex-fill" style="height: @(h)%; border-radius: 2px;"></div>
+                                        }
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-1">
+                                        <small class="text-muted">8:00</small>
+                                        <small class="text-muted">14:00</small>
+                                        <small class="text-muted">20:00</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (_selectedDevice.Type == DeviceType.Sensor)
+                        {
+                            <h6><span class="bi bi-thermometer-half me-1"></span>Temperature Monitoring</h6>
+                            <div class="row mt-3">
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-primary">-18.2C</h3>
+                                    <small class="text-muted">Temperatura Attuale</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-success">OK</h3>
+                                    <small class="text-muted">Range: -20/-16C</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-warning">2</h3>
+                                    <small class="text-muted">Alert Ultimi 7gg</small>
+                                </div>
+                            </div>
+                            <div class="card bg-light mt-3">
+                                <div class="card-body">
+                                    <h6>Ultimi Valori</h6>
+                                    <div class="d-flex align-items-center gap-1" style="height: 60px;">
+                                        @foreach (var v in new[] { 45, 48, 46, 50, 47, 52, 48, 46, 49, 47, 45, 48 })
+                                        {
+                                            <div class="bg-info flex-fill" style="height: @(v)%; margin-top: auto; border-radius: 2px;"></div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else if (_selectedDevice.Type == DeviceType.Robot)
+                        {
+                            <h6><span class="bi bi-robot me-1"></span>Robot Analytics</h6>
+                            <div class="row mt-3">
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-primary">12</h3>
+                                    <small class="text-muted">Delivery Oggi</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-success">2.3 km</h3>
+                                    <small class="text-muted">Distanza Percorsa</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-info">78%</h3>
+                                    <small class="text-muted">Batteria</small>
+                                </div>
+                            </div>
+                            <div class="progress mt-3" style="height: 20px;">
+                                <div class="progress-bar bg-success" style="width: 78%;"></div>
+                            </div>
+                        }
+                        else if (_selectedDevice.Type == DeviceType.ElectronicLabel)
+                        {
+                            <h6><span class="bi bi-tag me-1"></span>Electronic Label Status</h6>
+                            <div class="row mt-3">
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-success">342</h3>
+                                    <small class="text-muted">Etichette Sync</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-warning">8</h3>
+                                    <small class="text-muted">Da Aggiornare</small>
+                                </div>
+                                <div class="col-md-4 text-center">
+                                    <h3 class="text-primary">15 sec</h3>
+                                    <small class="text-muted">Tempo Sync Medio</small>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <h6><span class="bi bi-gear me-1"></span>Device Metrics</h6>
+                            <div class="row mt-3">
+                                <div class="col-md-6 text-center">
+                                    <h3 class="text-success">99.7%</h3>
+                                    <small class="text-muted">Uptime</small>
+                                </div>
+                                <div class="col-md-6 text-center">
+                                    <h3 class="text-primary">1.2k</h3>
+                                    <small class="text-muted">Eventi Oggi</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" @onclick="CloseModal">Chiudi</button>
+                        <button type="button" class="btn btn-primary">Vedi Storico Completo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else if (_viewMode == "integrator")
+{
+    <!-- VISTA SYSTEM INTEGRATOR -->
+    <!-- SI KPI Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold text-primary">4</h2>
+                    <small class="text-muted">Clienti Attivi</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold text-success">12</h2>
+                    <small class="text-muted">Progetti Deployati</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold text-warning">3</h2>
+                    <small class="text-muted">In Sviluppo</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <h2 class="fw-bold text-info">&euro;48K</h2>
+                    <small class="text-muted">MRR Totale</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Client List -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header"><strong>Clienti Gestiti</strong></div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Settore</th>
+                        <th>Progetti</th>
+                        <th>Dispositivi</th>
+                        <th>MRR</th>
+                        <th>Stato</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Conad Cesena</strong></td>
+                        <td>GDO</td>
+                        <td>3</td>
+                        <td>24</td>
+                        <td>&euro;12.000</td>
+                        <td><span class="badge bg-success">Live</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coop Bologna</strong></td>
+                        <td>GDO</td>
+                        <td>2</td>
+                        <td>18</td>
+                        <td>&euro;8.500</td>
+                        <td><span class="badge bg-success">Live</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Marriott Milano</strong></td>
+                        <td>Hospitality</td>
+                        <td>1</td>
+                        <td>6</td>
+                        <td>&euro;15.000</td>
+                        <td><span class="badge bg-warning text-dark">Pilot</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>DHL Logistics</strong></td>
+                        <td>Logistica</td>
+                        <td>2</td>
+                        <td>32</td>
+                        <td>&euro;12.500</td>
+                        <td><span class="badge bg-primary">Development</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Projects Overview -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header"><strong>Progetti per Stato</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Live in Produzione</span>
+                            <strong>8</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" style="width: 67%;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>In Pilot</span>
+                            <strong>2</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" style="width: 17%;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>In Sviluppo</span>
+                            <strong>2</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-primary" style="width: 17%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header"><strong>Revenue per Verticale</strong></div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>GDO</span>
+                            <strong>&euro;20.500/mese</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-danger" style="width: 43%;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Hospitality</span>
+                            <strong>&euro;15.000/mese</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-info" style="width: 31%;"></div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Logistica</span>
+                            <strong>&euro;12.500/mese</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-warning" style="width: 26%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
+    private string _viewMode = "cliente";
     private bool _loading = true;
     private string _storeName = "";
     private int _totalDevices;
@@ -208,6 +558,7 @@ else
     private int _unreadAlerts;
     private List<Device> _devices = new();
     private List<Alert> _alerts = new();
+    private Device? _selectedDevice;
 
     protected override async Task OnInitializedAsync()
     {
@@ -229,4 +580,24 @@ else
         }
         _loading = false;
     }
+
+    private void SelectDevice(Device device)
+    {
+        _selectedDevice = device;
+    }
+
+    private void CloseModal()
+    {
+        _selectedDevice = null;
+    }
+
+    private string GetDeviceIcon(DeviceType type) => type switch
+    {
+        DeviceType.Camera => "camera-video",
+        DeviceType.Sensor => "thermometer-half",
+        DeviceType.Robot => "robot",
+        DeviceType.ElectronicLabel => "tag",
+        DeviceType.EdgeComputer => "gpu-card",
+        _ => "gear"
+    };
 }

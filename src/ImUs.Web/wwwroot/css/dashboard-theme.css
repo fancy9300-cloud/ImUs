@@ -141,6 +141,96 @@
     background-color: rgba(255, 255, 255, 0.05);
 }
 
+/* Dark mode: card body text */
+[data-theme="dark"] .card-body,
+[data-theme="dark"] .card-body h5,
+[data-theme="dark"] .card-body h6,
+[data-theme="dark"] .card-body p,
+[data-theme="dark"] .card-body li,
+[data-theme="dark"] .card-body strong,
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5:not(.text-muted),
+[data-theme="dark"] h6 {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .card-body .text-muted,
+[data-theme="dark"] .card-body p.text-muted,
+[data-theme="dark"] .card-body small.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Dark mode: nav tabs */
+[data-theme="dark"] .nav-tabs {
+    border-bottom-color: var(--card-border);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link {
+    color: var(--text-muted);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link.active {
+    background-color: var(--card-bg);
+    border-color: var(--card-border) var(--card-border) var(--card-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .nav-tabs .nav-link:hover:not(.active) {
+    border-color: var(--card-border);
+    color: var(--text-primary);
+}
+
+/* Dark mode: list items, general text */
+[data-theme="dark"] ul li,
+[data-theme="dark"] .list-unstyled li {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .list-unstyled li.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Dark mode: table-light header */
+[data-theme="dark"] .table-light {
+    background-color: #151628 !important;
+}
+
+[data-theme="dark"] .table-light th {
+    background-color: #151628 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dark mode: card-header bg-light */
+[data-theme="dark"] .card-header.bg-light {
+    background-color: #252842 !important;
+    color: var(--text-primary) !important;
+}
+
+/* Dark mode: progress bar background */
+[data-theme="dark"] .progress {
+    background-color: #252842;
+}
+
+/* Dark mode: btn-outline-secondary */
+[data-theme="dark"] .btn-outline-secondary {
+    border-color: var(--card-border);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .btn-outline-secondary:hover {
+    background-color: #252842;
+    color: var(--text-primary);
+}
+
+/* Custom Badge Colors */
+.bg-purple {
+    background-color: #a78bfa !important;
+    color: white !important;
+}
+
 /* ========================================
    Base Styles
    ======================================== */
