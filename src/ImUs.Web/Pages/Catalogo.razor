@@ -1,0 +1,110 @@
+@page "/catalogo"
+
+<PageTitle>Catalogo Hardware - ImUs</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Catalogo Hardware Certificato</h3>
+    <div>
+        <select class="form-select form-select-sm d-inline-block" style="width:auto;" @bind="_filterCategory">
+            <option value="">Tutte le categorie</option>
+            <option value="Camera">Telecamere</option>
+            <option value="Robot">Robot</option>
+            <option value="Sensor">Sensori</option>
+            <option value="Label">Etichette Elettroniche</option>
+            <option value="Edge">Edge Computing</option>
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    @foreach (var p in FilteredProducts)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <span class="badge bg-@p.CategoryColor">@p.Category</span>
+                        @if (p.Certified)
+                        {
+                            <span class="badge bg-success"><span class="bi bi-check-circle"></span> Certificato ImUs</span>
+                        }
+                    </div>
+                    <div class="text-center py-3">
+                        <span class="bi @p.Icon display-1 text-secondary"></span>
+                    </div>
+                    <h5 class="card-title">@p.Name</h5>
+                    <p class="text-muted small mb-1"><strong>@p.Manufacturer</strong></p>
+                    <p class="card-text small">@p.Description</p>
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        @foreach (var f in p.Features)
+                        {
+                            <span class="badge bg-light text-dark border">@f</span>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">@p.Price</span>
+                        <span class="text-muted small">@p.Integrations integrazioni</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary flex-fill">Scheda Tecnica</button>
+                    <button class="btn btn-sm btn-primary flex-fill">API Docs</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="card bg-light border-0 mt-3">
+    <div class="card-body text-center">
+        <h5>Sei un produttore hardware?</h5>
+        <p class="text-muted">Pubblica i tuoi prodotti sul catalogo ImUs e raggiungi sviluppatori e clienti nel settore retail IoT.</p>
+        <button class="btn btn-primary">Diventa Partner Hardware</button>
+        <p class="small text-muted mt-2">Listing fee: &euro;500 - &euro;2.000/mese</p>
+    </div>
+</div>
+
+@code {
+    private string _filterCategory = "";
+
+    record HardwareProduct(string Name, string Manufacturer, string Category, string CategoryColor, string Icon, string Description, string Price, string[] Features, int Integrations, bool Certified);
+
+    private IEnumerable<HardwareProduct> FilteredProducts =>
+        string.IsNullOrEmpty(_filterCategory)
+            ? _products
+            : _products.Where(p => p.Category == _filterCategory);
+
+    private List<HardwareProduct> _products = new()
+    {
+        new("AXIS P3265-LVE", "Axis Communications", "Camera", "danger", "bi-camera-video",
+            "Telecamera dome da 2MP con deep learning, ideale per analytics retail e people counting.",
+            "€890", new[]{"4K", "Deep Learning", "PoE", "ONVIF"}, 12, true),
+        new("AXIS M3088-V", "Axis Communications", "Camera", "danger", "bi-camera-video",
+            "Telecamera panoramica 360° per copertura completa di corsie e aree vendita.",
+            "€1.250", new[]{"360°", "12MP", "IR", "MQTT"}, 8, true),
+        new("BellaBot", "Pudu Robotics", "Robot", "primary", "bi-robot",
+            "Robot delivery per ristorazione e hospitality. Navigazione autonoma, display interattivo.",
+            "€15.000", new[]{"LIDAR", "Autonomo", "Display", "API"}, 6, true),
+        new("CC1 Cleaning Robot", "Pudu Robotics", "Robot", "primary", "bi-robot",
+            "Robot pulizia autonomo per GDO. Mappatura ambiente, pulizia schedulata.",
+            "€22.000", new[]{"LIDAR", "Pulizia", "Scheduling", "API"}, 4, true),
+        new("STS40", "Sensirion", "Sensor", "success", "bi-thermometer-half",
+            "Sensore temperatura alta precisione per monitoraggio banchi frigo e celle frigorifere.",
+            "€45", new[]{"±0.1°C", "I2C", "Low Power", "IP67"}, 15, true),
+        new("SCD41", "Sensirion", "Sensor", "success", "bi-cloud",
+            "Sensore CO2, temperatura e umidita per qualita dell'aria in store.",
+            "€55", new[]{"CO2", "T/H", "I2C", "Compact"}, 10, true),
+        new("VusionRail", "VusionGroup", "Label", "warning", "bi-tag",
+            "Etichetta elettronica da scaffale con e-ink, aggiornamento prezzi in tempo reale.",
+            "€12/pz", new[]{"E-Ink", "NFC", "Cloud", "7 anni"}, 9, true),
+        new("VusionSpot", "VusionGroup", "Label", "warning", "bi-tag",
+            "Display promozionale digitale da scaffale con LED e geolocalizzazione.",
+            "€35/pz", new[]{"LED", "Promo", "Analytics", "BLE"}, 5, true),
+        new("Jetson Orin Nano", "NVIDIA", "Edge", "info", "bi-gpu-card",
+            "Modulo edge computing per inferenza AI on-premise. Fino a 40 TOPS.",
+            "€499", new[]{"40 TOPS", "CUDA", "8GB", "Compact"}, 20, true),
+        new("Jetson AGX Orin", "NVIDIA", "Edge", "info", "bi-gpu-card",
+            "Piattaforma edge computing ad alte prestazioni per multi-stream video analytics.",
+            "€1.999", new[]{"275 TOPS", "CUDA", "64GB", "Multi-cam"}, 18, true)
+    };
+}

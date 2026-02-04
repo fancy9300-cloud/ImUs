@@ -1,0 +1,21 @@
+/* 
+   Layout styles are now handled globally in wwwroot/css/dashboard-theme.css 
+   to ensure consistency across the application.
+*/
+.page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+@media (min-width: 641px) {
+    .page {
+        flex-direction: row;
+    }
+
+    /* Removed .sidebar width/position rules to respect dashboard-theme.css */
+}

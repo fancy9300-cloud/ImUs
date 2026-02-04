@@ -1,0 +1,232 @@
+@page "/casistudio/gdo"
+@using ImUs.Domain.Entities
+@using ImUs.Domain.Enums
+@using ImUs.Domain.Interfaces
+@using ImUs.Application.Services
+@inject StoreService StoreService
+@inject DeviceAppService DeviceService
+@inject AlertAppService AlertService
+
+<PageTitle>Caso Studio GDO - ImUs</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-0">Caso Studio: GDO</h3>
+        <small class="text-muted">Smart Store Conad Cesena - Progetto Enterprise Live</small>
+    </div>
+    <span class="badge bg-success fs-6">LIVE</span>
+</div>
+
+@if (_loading)
+{
+    <p>Caricamento...</p>
+}
+else
+{
+    <!-- KPI Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">Dispositivi Online</h6>
+                    <h2 class="mb-0">@_devicesOnline / @_totalDevices</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">Zone Monitorate</h6>
+                    <h2 class="mb-0">@_zoneCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning shadow-sm">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">Alert Attivi</h6>
+                    <h2 class="mb-0">@_unreadAlerts</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white shadow-sm" style="background-color: #0f3460;">
+                <div class="card-body">
+                    <h6 class="card-title opacity-75">Store</h6>
+                    <h2 class="mb-0" style="font-size: 1.2rem;">@_storeName</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modules active -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header"><strong>Moduli Attivi</strong></div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-success p-2">Monitoraggio Frigo</span>
+                        <span class="badge bg-success p-2">People Counting</span>
+                        <span class="badge bg-success p-2">Etichette Elettroniche</span>
+                        <span class="badge bg-warning text-dark p-2">Robot Pulizia (Pilot)</span>
+                        <span class="badge bg-secondary p-2">Scaffali Intelligenti (Coming)</span>
+                        <span class="badge bg-secondary p-2">Predictive Maintenance (Coming)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Devices & Alerts -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between">
+                    <strong>Dispositivi</strong>
+                    <a href="/casistudio/gdo/devices" class="text-decoration-none small">Vedi tutti</a>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Tipo</th>
+                                <th>Stato</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in _devices)
+                            {
+                                <tr>
+                                    <td>@d.Name</td>
+                                    <td>@d.Type</td>
+                                    <td>
+                                        @if (d.IsOnline)
+                                        {
+                                            <span class="badge bg-success">Online</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Offline</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between">
+                    <strong>Alert Recenti</strong>
+                    <a href="/casistudio/gdo/alerts" class="text-decoration-none small">Vedi tutti</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (!_alerts.Any())
+                    {
+                        <p class="p-3 text-muted">Nessun alert. Invia dati a <code>POST /api/iot/ingest</code> per generarne.</p>
+                    }
+                    else
+                    {
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Gravita</th>
+                                    <th>Messaggio</th>
+                                    <th>Data</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var a in _alerts)
+                                {
+                                    var badgeClass = a.Severity switch
+                                    {
+                                        Severity.Critical => "bg-danger",
+                                        Severity.Warning => "bg-warning text-dark",
+                                        _ => "bg-info"
+                                    };
+                                    <tr>
+                                        <td><span class="badge @badgeClass">@a.Severity</span></td>
+                                        <td>@a.Message</td>
+                                        <td>@a.CreatedAt.ToString("HH:mm dd/MM")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template Generated -->
+    <div class="card shadow-sm mt-4">
+        <div class="card-header"><strong>Template Generati da Questo Progetto</strong></div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Pubblicato</span>
+                            <h6>Fridge Temperature Monitor</h6>
+                            <small class="text-muted">89 downloads</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-success">
+                        <div class="card-body">
+                            <span class="badge bg-success mb-2">Pubblicato</span>
+                            <h6>Digital Price Tag Sync</h6>
+                            <small class="text-muted">67 downloads</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <span class="badge bg-warning text-dark mb-2">In Sviluppo</span>
+                            <h6>Shelf Monitoring v3</h6>
+                            <small class="text-muted">Da questo progetto</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _loading = true;
+    private string _storeName = "";
+    private int _totalDevices;
+    private int _devicesOnline;
+    private int _zoneCount;
+    private int _unreadAlerts;
+    private List<Device> _devices = new();
+    private List<Alert> _alerts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var stores = await StoreService.GetAllStoresAsync();
+        var store = stores.FirstOrDefault();
+        if (store is not null)
+        {
+            _storeName = store.Name;
+            _zoneCount = store.ZoneCount;
+
+            var devices = await DeviceService.GetDevicesByStoreAsync(store.Id);
+            _devices = devices.ToList();
+            _totalDevices = _devices.Count;
+            _devicesOnline = _devices.Count(d => d.IsOnline);
+
+            var alerts = await AlertService.GetRecentAlertsAsync(store.Id);
+            _alerts = alerts.ToList();
+            _unreadAlerts = _alerts.Count(a => !a.IsRead);
+        }
+        _loading = false;
+    }
+}

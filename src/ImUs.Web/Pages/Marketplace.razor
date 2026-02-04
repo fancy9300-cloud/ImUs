@@ -1,0 +1,170 @@
+@page "/marketplace"
+
+<PageTitle>Marketplace - ImUs</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Marketplace</h3>
+    <button class="btn btn-primary">+ Pubblica Progetto</button>
+</div>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "projects" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "projects"'>Progetti Attivi</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "devs" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "devs"'>Sviluppatori</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(_tab == "enterprise" ? "active" : "")" href="javascript:void(0)" @onclick='() => _tab = "enterprise"'>Enterprise (Team ImUs)</a>
+    </li>
+</ul>
+
+@if (_tab == "projects")
+{
+    <div class="row">
+        @foreach (var p in _projects)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between">
+                            <span class="badge bg-@p.StatusColor mb-2">@p.Status</span>
+                            <span class="text-muted small">@p.Vertical</span>
+                        </div>
+                        <h5 class="card-title">@p.Title</h5>
+                        <p class="card-text text-muted">@p.Description</p>
+                        <div class="d-flex flex-wrap gap-1 mb-3">
+                            @foreach (var tag in p.Tags)
+                            {
+                                <span class="badge bg-light text-dark border">@tag</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">@GetPricingBadge(p.Budget)</span>
+                            <span class="text-muted small">@p.Proposals proposte</span>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <button class="btn btn-sm btn-outline-primary w-100">Dettagli</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else if (_tab == "devs")
+{
+    <div class="row">
+        @foreach (var d in _developers)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center mb-3" style="width:64px;height:64px;font-size:1.5rem;">
+                            @d.Initials
+                        </div>
+                        <h5>@d.Name</h5>
+                        <p class="text-muted small">@d.Specialty</p>
+                        <div class="d-flex justify-content-center gap-1 mb-2">
+                            @foreach (var s in d.Skills)
+                            {
+                                <span class="badge bg-light text-dark border">@s</span>
+                            }
+                        </div>
+                        <div class="d-flex justify-content-around text-center mt-3">
+                            <div><strong>@d.Projects</strong><br /><small class="text-muted">Progetti</small></div>
+                            <div><strong>@d.Rating</strong><br /><small class="text-muted">Rating</small></div>
+                            <div><strong>@d.Rate</strong><br /><small class="text-muted">/ora</small></div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <button class="btn btn-sm btn-outline-primary w-100">Profilo</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5>Team Interno ImUs</h5>
+            <p>Il team enterprise gestisce progetti complessi end-to-end. Ogni progetto genera template riutilizzabili che vanno sulla piattaforma.</p>
+            <div class="row mt-4">
+                @foreach (var ep in _enterpriseProjects)
+                {
+                    <div class="col-md-6 mb-3">
+                        <div class="card border-@ep.Color">
+                            <div class="card-body">
+                                <span class="badge bg-@ep.Color mb-2">@ep.Phase</span>
+                                <h6>@ep.Name</h6>
+                                <p class="small text-muted mb-2">@ep.Client</p>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-@ep.Color" style="width: @ep.Progress%"></div>
+                                </div>
+                                <small class="text-muted">@ep.Progress% completato</small>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string _tab = "projects";
+
+    record ProjectCard(string Title, string Description, string Vertical, string Budget, string Status, string StatusColor, int Proposals, string[] Tags);
+    record DevCard(string Name, string Initials, string Specialty, string[] Skills, int Projects, string Rating, string Rate);
+    record EnterpriseProject(string Name, string Client, string Phase, string Color, int Progress);
+
+    private List<ProjectCard> _projects = new()
+    {
+        new("Monitoraggio Scaffali Intelligenti", "Computer vision per rilevare scaffali vuoti e prodotti fuori posto in tempo reale.", "GDO", "€15.000 - €30.000", "Aperto", "success", 7, new[]{"Computer Vision", "Python", "NVIDIA"}),
+        new("Sistema Frigo IoT", "Sensori temperatura e umidità per banchi frigo con alert automatici.", "GDO", "€8.000 - €15.000", "Aperto", "success", 4, new[]{"IoT", "MQTT", "Sensirion"}),
+        new("People Counting Retail", "Conteggio persone in ingresso/uscita con telecamere Axis e analytics.", "Retail", "€12.000 - €25.000", "In Revisione", "warning", 9, new[]{"Computer Vision", "Axis", "Analytics"}),
+        new("Robot Delivery Hospitality", "Integrazione robot Pudu per consegna in camera in hotel.", "Hospitality", "€20.000 - €40.000", "Aperto", "success", 3, new[]{"Robotics", "Pudu", "API"}),
+        new("Digital Price Tags", "Integrazione etichette elettroniche VusionGroup con sistema gestionale.", "GDO", "€5.000 - €10.000", "Assegnato", "primary", 0, new[]{"IoT", "VusionGroup", "ERP"}),
+        new("Predictive Maintenance", "Manutenzione predittiva per impianti di refrigerazione.", "Logistica", "€25.000 - €50.000", "Aperto", "success", 5, new[]{"ML", "IoT", "Edge"})
+    };
+
+    private List<DevCard> _developers = new()
+    {
+        new("Marco Bianchi", "MB", "Computer Vision Engineer", new[]{"Python", "OpenCV", "NVIDIA"}, 14, "4.9", "€75"),
+        new("Laura Rossi", "LR", "IoT Solutions Architect", new[]{"MQTT", "Edge", "Azure"}, 22, "4.8", "€85"),
+        new("Alessandro Verdi", "AV", "Full-Stack Developer", new[]{"C#", "React", "SignalR"}, 31, "4.7", "€65"),
+        new("Giulia Ferrari", "GF", "Data Scientist", new[]{"Python", "ML", "Analytics"}, 9, "5.0", "€90"),
+        new("Stefano Conti", "SC", "Embedded Systems", new[]{"C++", "MQTT", "Sensori"}, 18, "4.6", "€70"),
+        new("Elena Marino", "EM", "Robotics Engineer", new[]{"ROS", "Python", "Pudu API"}, 7, "4.9", "€95")
+    };
+
+    private List<EnterpriseProject> _enterpriseProjects = new()
+    {
+        new("Smart Store Conad Cesena", "Conad", "In Produzione", "success", 85),
+        new("Pilot Retail Analytics", "Coop", "Sviluppo", "primary", 40),
+        new("Warehouse IoT Platform", "DHL Italy", "Discovery", "warning", 15),
+        new("Hotel Automation Suite", "Marriott IT", "Proposta", "info", 5)
+    };
+
+    private MarkupString GetPricingBadge(string budget)
+    {
+        // Extract first number from budget string like "€15.000 - €30.000"
+        var match = System.Text.RegularExpressions.Regex.Match(budget, @"€([\d.]+)");
+        if (match.Success)
+        {
+            var cleanNumber = match.Groups[1].Value.Replace(".", "");
+            if (int.TryParse(cleanNumber, out int amount))
+            {
+                if (amount < 10000)
+                    return new MarkupString("<span class='badge bg-success fs-6'>€</span> <small class='text-muted'>Budget</small>");
+                else if (amount < 25000)
+                    return new MarkupString("<span class='badge bg-warning text-dark fs-6'>€€</span> <small class='text-muted'>Mid</small>");
+                else
+                    return new MarkupString("<span class='badge bg-primary fs-6'>€€€</span> <small class='text-muted'>Enterprise</small>");
+            }
+        }
+        return new MarkupString("<span class='badge bg-secondary'>TBD</span>");
+    }
+}

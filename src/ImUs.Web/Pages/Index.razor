@@ -1,0 +1,369 @@
+@page "/"
+
+<PageTitle>ImUs - Piattaforma IoT/AI per Retail</PageTitle>
+
+<!-- Dashboard Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">Dashboard</h2>
+        <p class="text-muted mb-0">Benvenuto in ImUs Platform. Ecco la situazione oggi.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/marketplace" class="btn btn-primary"><span class="bi bi-plus-lg me-1"></span> Nuovo Progetto</a>
+        <button class="btn btn-outline-secondary"><span class="bi bi-download"></span> Report</button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-light text-primary">
+                <span class="bi bi-hdd-network"></span>
+            </div>
+            <div class="stat-value">5</div>
+            <div class="stat-label">Partner Hardware</div>
+            <div class="stat-trend positive">
+                <span class="bi bi-arrow-up-short"></span> +12%
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-light text-success">
+                <span class="bi bi-code-square"></span>
+            </div>
+            <div class="stat-value">12</div>
+            <div class="stat-label">Template Disponibili</div>
+            <div class="stat-trend positive">
+                <span class="bi bi-arrow-up-short"></span> +4
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-light text-warning">
+                <span class="bi bi-layers"></span>
+            </div>
+            <div class="stat-value">4</div>
+            <div class="stat-label">Verticali Attivi</div>
+            <div class="stat-trend text-muted">Stabile</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="stat-icon bg-light text-info">
+                <span class="bi bi-trophy"></span>
+            </div>
+            <div class="stat-value">1</div>
+            <div class="stat-label">Casi Studio Live</div>
+            <div class="stat-trend positive">
+                <span class="bi bi-arrow-up-short"></span> New
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Area: Search & Activities -->
+<div class="row">
+    <!-- Left Column: Search & Discovery -->
+    <div class="col-lg-8">
+        <!-- Smart Search Widget -->
+        <div class="search-bar mb-4">
+            <h5 class="mb-3">Ricerca Intelligente</h5>
+            <div class="input-group">
+                <span class="input-group-text border-end-0 bg-white">
+                    <span class="bi bi-search text-muted"></span>
+                </span>
+                <input type="text" class="form-control border-start-0 ps-0" 
+                       placeholder="Cerca progetti, hardware o chiedi all'IA (es: 'soluzione per monitoraggio frigo')..."
+                       @bind="searchQuery"
+                       @bind:event="oninput"
+                       @onkeyup="OnSearchKeyUp" />
+                <button class="btn btn-primary px-4" @onclick="SearchAsync">
+                    @if (isSearching)
+                    {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                    }
+                    Cerca
+                </button>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(searchQuery) && searchResults.Any())
+            {
+                <div class="mt-4 fade-in">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="text-muted mb-0">Risultati: @searchResults.Count trovati</h6>
+                    </div>
+                    
+                    <div class="list-group list-group-flush">
+                        @foreach (var project in searchResults)
+                        {
+                            <div class="list-group-item border-0 px-0 py-3 border-bottom">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="mb-1">@project.Title</h6>
+                                        <p class="text-muted small mb-2">@project.ClientName</p>
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-light text-success border border-success border-opacity-25">ROI: +@project.EstimatedROI.ToString("N0")€</span>
+                                            <span class="badge bg-light text-dark border">@project.PricingBadge Investimento</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-primary">Dettagli</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Development Paths (Inline) -->
+                    <div class="card bg-light border-0 mt-3 p-3">
+                        <h6 class="mb-3">Opzioni di Sviluppo</h6>
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <button class="btn btn-white w-100 h-100 border text-start p-2 shadow-sm d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-success bg-opacity-10 text-success p-2"><span class="bi bi-box-seam"></span></div>
+                                    <div class="small lh-1">
+                                        <div class="fw-bold">Template</div>
+                                        <div class="text-muted" style="font-size: 0.75rem">1-2 sett.</div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-white w-100 h-100 border text-start p-2 shadow-sm d-flex align-items-center gap-2" @onclick="ShowAIDevModal">
+                                    <div class="rounded-circle bg-secondary bg-opacity-10 text-secondary p-2"><span class="bi bi-robot"></span></div>
+                                    <div class="small lh-1">
+                                        <div class="fw-bold">AI Helper</div>
+                                        <div class="text-muted" style="font-size: 0.75rem">Beta</div>
+                                    </div>
+                                </button>
+                            </div>
+                            <div class="col-md-4">
+                                <button class="btn btn-white w-100 h-100 border text-start p-2 shadow-sm d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary bg-opacity-10 text-primary p-2"><span class="bi bi-person-check"></span></div>
+                                    <div class="small lh-1">
+                                        <div class="fw-bold">Developer</div>
+                                        <div class="text-muted" style="font-size: 0.75rem">Recommended</div>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(searchQuery) && !isSearching)
+            {
+               <div class="text-center py-4 text-muted">
+                   <p class="mb-2">Nessun risultato esatto.</p>
+                   <button class="btn btn-sm btn-outline-secondary" @onclick="ShowAIDevModal">Chiedi all'Assistente AI</button>
+               </div>
+            }
+        </div>
+        
+        <!-- Recent Projects Table -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom-0 pt-4 px-4">
+                <h5 class="mb-0">Progetti Recenti</h5>
+                <a href="/marketplace" class="text-decoration-none small">Vedi tutti</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+                    <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4">Progetto</th>
+                            <th>Status</th>
+                            <th>Budget</th>
+                            <th>Data</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">Smart Shelf @@ Conad</div>
+                                <small class="text-muted">GDO Automation</small>
+                            </td>
+                            <td><span class="badge bg-success bg-opacity-10 text-success">Completato</span></td>
+                            <td><span class="badge bg-light text-dark border">€€</span></td>
+                            <td class="text-muted">Oggi</td>
+                        </tr>
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">Fridge Monitor</div>
+                                <small class="text-muted">IoT Sensors</small>
+                            </td>
+                            <td><span class="badge bg-primary bg-opacity-10 text-primary">In Corso</span></td>
+                            <td><span class="badge bg-light text-dark border">€</span></td>
+                            <td class="text-muted">Ieri</td>
+                        </tr>
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold">Warehouse Tracking</div>
+                                <small class="text-muted">Logistics</small>
+                            </td>
+                            <td><span class="badge bg-warning bg-opacity-10 text-warning">Pending</span></td>
+                            <td><span class="badge bg-light text-dark border">€€€</span></td>
+                            <td class="text-muted">2 feb</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column: Quick Stats / Notifications -->
+    <div class="col-lg-4">
+        <!-- Revenue Card -->
+        <div class="card mb-4 bg-primary text-white border-0" style="background: linear-gradient(135deg, #4c6fff, #3b5bdb);">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-4">
+                    <div>
+                        <h6 class="text-white-50 text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 1px;">ROI Generato</h6>
+                        <h2 class="mb-0 fw-bold">€1.45M</h2>
+                    </div>
+                    <div class="p-2 bg-white bg-opacity-20 rounded">
+                        <span class="bi bi-graph-up text-white"></span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center text-white-50 small">
+                    <span class="text-white fw-bold me-2"><i class="bi bi-arrow-up"></i> 12%</span> vs mese scorso
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Status -->
+        <div class="card mb-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 px-4">
+                 <h5 class="mb-0">Stato Sistema</h5>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success p-1" style="width: 10px; height: 10px;"></div>
+                        <span>API Gateway</span>
+                    </div>
+                    <small class="text-muted">99.9%</small>
+                </div>
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-success p-1" style="width: 10px; height: 10px;"></div>
+                        <span>Marketplace Core</span>
+                    </div>
+                    <small class="text-muted">100%</small>
+                </div>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning p-1" style="width: 10px; height: 10px;"></div>
+                        <span>AI Services</span>
+                    </div>
+                    <small class="text-muted">Carico Alto</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card">
+             <div class="card-body">
+                 <h6 class="text-muted text-uppercase small mb-3">Link Rapidi</h6>
+                 <div class="d-flex flex-column gap-2">
+                     <a href="/sviluppatori" class="btn btn-light text-start text-primary fw-medium">
+                         <span class="bi bi-people me-2"></span> Trova Sviluppatore
+                     </a>
+                     <a href="/catalogo" class="btn btn-light text-start text-dark">
+                         <span class="bi bi-cpu me-2"></span> Catalogo Hardware
+                     </a>
+                     <a href="/guide" class="btn btn-light text-start text-dark">
+                         <span class="bi bi-book me-2"></span> Guide & Docs
+                     </a>
+                 </div>
+             </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Development Modal -->
+@if (showAiModal)
+{
+    <div class="modal fade show d-block" style="background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title text-primary"><span class="bi bi-robot me-2"></span>AI Assistant (Beta)</h5>
+                    <button type="button" class="btn-close" @onclick="CloseAIDevModal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-secondary d-flex align-items-center">
+                        <span class="bi bi-info-circle me-2"></span>
+                        <small>Questa feature è sperimentale. Il codice generato richiede review umana.</small>
+                    </div>
+                    <p>Descrivi cosa vuoi costruire. L'AI genererà un template iniziale per te.</p>
+                    <textarea class="form-control mb-3" rows="4" placeholder="Es: Un sistema che monitora la temperatura dei banchi frigo e invia alert su WhatsApp..." @bind="aiPrompt"></textarea>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-primary" disabled>
+                            ⚡ Genera Progetto (Simulazione)
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string searchQuery = "";
+    private bool isSearching = false;
+    private List<ImUs.Application.DTOs.CompletedProjectDTO> searchResults = new();
+
+    [Inject]
+    private ImUs.Application.Services.ISmartSearchService SearchService { get; set; } = default!;
+
+    private async Task OnSearchKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SearchAsync();
+        }
+    }
+
+    private async Task SearchAsync()
+    {
+        if (string.IsNullOrWhiteSpace(searchQuery))
+        {
+            searchResults.Clear();
+            return;
+        }
+
+        isSearching = true;
+        StateHasChanged();
+
+        try
+        {
+            searchResults = await SearchService.SearchByObjectAsync(searchQuery);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Search error: {ex.Message}");
+            searchResults.Clear();
+        }
+        finally
+        {
+            isSearching = false;
+            StateHasChanged();
+        }
+    }
+
+    private bool showAiModal = false;
+    private string aiPrompt = "";
+
+    private void ShowAIDevModal()
+    {
+        showAiModal = true;
+        aiPrompt = searchQuery;
+        StateHasChanged();
+    }
+
+    private void CloseAIDevModal()
+    {
+        showAiModal = false;
+        StateHasChanged();
+    }
+}

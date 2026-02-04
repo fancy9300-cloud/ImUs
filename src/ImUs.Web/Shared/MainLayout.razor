@@ -1,0 +1,58 @@
+@inherits LayoutComponentBase
+
+<PageTitle>ImUs - IoT/AI Retail Platform</PageTitle>
+
+<div class="page" data-theme="@currentTheme">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <span class="fw-semibold" style="color: var(--text-primary);">Dashboard</span>
+                <span class="text-muted">/</span>
+                <span style="color: var(--text-secondary);">ImUs Platform</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <button class="theme-toggle" @onclick="ToggleTheme">
+                    @if (currentTheme == "dark")
+                    {
+                        <span class="bi bi-sun"></span>
+                        <span>Light</span>
+                    }
+                    else
+                    {
+                        <span class="bi bi-moon"></span>
+                        <span>Dark</span>
+                    }
+                </button>
+                <a href="/swagger" target="_blank" class="btn btn-outline-secondary btn-sm">
+                    <span class="bi bi-code-slash me-1"></span> API
+                </a>
+                <div class="d-flex align-items-center gap-2" style="cursor: pointer;">
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                        <span class="bi bi-person"></span>
+                    </div>
+                    <div class="d-none d-md-block">
+                        <div class="small fw-semibold" style="color: var(--text-primary);">Admin User</div>
+                        <div class="small" style="color: var(--text-muted);">Platform Manager</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+@code {
+    private string currentTheme = "light";
+
+    private void ToggleTheme()
+    {
+        currentTheme = currentTheme == "light" ? "dark" : "light";
+    }
+}

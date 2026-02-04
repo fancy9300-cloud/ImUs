@@ -1,0 +1,62 @@
+@page "/casistudio/gdo/alerts"
+@using ImUs.Domain.Entities
+@using ImUs.Domain.Enums
+@using ImUs.Application.Services
+@inject AlertAppService AlertService
+@inject StoreService StoreService
+
+<PageTitle>Alert - ImUs</PageTitle>
+
+<h3 class="mb-4">Alert</h3>
+
+@if (_alerts.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Gravita</th>
+                <th>Tipo</th>
+                <th>Messaggio</th>
+                <th>Letto</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in _alerts)
+            {
+                var badgeClass = a.Severity switch
+                {
+                    Severity.Critical => "bg-danger",
+                    Severity.Warning => "bg-warning text-dark",
+                    _ => "bg-info"
+                };
+                <tr>
+                    <td><span class="badge @badgeClass">@a.Severity</span></td>
+                    <td>@a.Type</td>
+                    <td>@a.Message</td>
+                    <td>@(a.IsRead ? "Si" : "No")</td>
+                    <td>@a.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p class="text-muted">Nessun alert. Invia dati IoT a POST /api/iot/ingest per generare alert.</p>
+}
+
+@code {
+    private List<Alert> _alerts = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var stores = await StoreService.GetAllStoresAsync();
+        var store = stores.FirstOrDefault();
+        if (store is not null)
+        {
+            var alerts = await AlertService.GetRecentAlertsAsync(store.Id, 50);
+            _alerts = alerts.ToList();
+        }
+    }
+}

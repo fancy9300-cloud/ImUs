@@ -1,0 +1,627 @@
+/* ========================================
+   ImUs Dashboard Theme - Modern Admin Style
+   Light Mode (default) + Dark Mode Support
+   ======================================== */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ========================================
+   CSS Variables (Design Tokens)
+   ======================================== */
+:root {
+    /* Colors - Light Mode */
+    --sidebar-bg: #1e2139;
+    --sidebar-hover: #262b4a;
+    --sidebar-active: #3b4372;
+    --sidebar-text: rgba(255, 255, 255, 0.7);
+    --sidebar-text-active: #ffffff;
+    --sidebar-section: rgba(255, 255, 255, 0.4);
+
+    --content-bg: #f4f6fa;
+    --card-bg: #ffffff;
+    --card-border: #e8eaf1;
+    --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+
+    --text-primary: #1e2139;
+    --text-secondary: #6c757d;
+    --text-muted: #8b93a7;
+
+    --accent-primary: #4c6fff;
+    --accent-success: #22c55e;
+    --accent-warning: #f59e0b;
+    --accent-danger: #ef4444;
+    --accent-info: #06b6d4;
+
+    --border-radius: 10px;
+    --border-radius-sm: 6px;
+    --border-radius-lg: 16px;
+
+    --topbar-bg: #ffffff;
+    --topbar-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Dark Mode Variables */
+[data-theme="dark"] {
+    --sidebar-bg: #0f1023;
+    --sidebar-hover: #1a1c35;
+    --sidebar-active: #252842;
+
+    --content-bg: #12132a;
+    --card-bg: #1a1c35;
+    --card-border: #262b4a;
+    --card-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+
+    --text-primary: #ffffff;
+    --text-secondary: #e2e8f0;
+    /* Much lighter gray (was #a0aec0) */
+    --text-muted: #cbd5e1;
+    /* Lighter gray (was #9ca3af) */
+
+    --topbar-bg: #1a1c35;
+    --topbar-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ========================================
+   Dark Mode Overrides for Bootstrap Utilities
+   ======================================== */
+[data-theme="dark"] .bg-light {
+    background-color: #252842 !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .bg-white {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .border {
+    border-color: var(--card-border) !important;
+}
+
+/* Specific Dark Mode Fixes */
+[data-theme="dark"] .input-group-text,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: #151628;
+    border-color: var(--card-border);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.2);
+}
+
+[data-theme="dark"] .btn-white {
+    background-color: #252842;
+    border-color: var(--card-border);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-white:hover {
+    background-color: #2d304b;
+}
+
+[data-theme="dark"] .list-group-item {
+    background-color: transparent;
+    color: var(--text-primary);
+    border-color: var(--card-border);
+}
+
+[data-theme="dark"] .badge.bg-light {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--card-border) !important;
+}
+
+[data-theme="dark"] .table {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .table thead th {
+    background-color: #151628;
+    color: var(--text-primary);
+    border-color: var(--card-border);
+}
+
+[data-theme="dark"] .table tbody td {
+    border-color: var(--card-border);
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ========================================
+   Base Styles
+   ======================================== */
+html,
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 14px;
+    background-color: var(--content-bg);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ========================================
+   Layout - Page Structure
+   ======================================== */
+.page {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 260px;
+    background: var(--sidebar-bg);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+main {
+    flex: 1;
+    margin-left: 260px;
+    background: var(--content-bg);
+    min-height: 100vh;
+}
+
+/* ========================================
+   Top Navigation Bar
+   ======================================== */
+.top-row {
+    background: var(--topbar-bg);
+    height: 60px;
+    padding: 0 24px !important;
+    box-shadow: var(--topbar-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.top-row a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+}
+
+.top-row a:hover {
+    background: var(--content-bg);
+    color: var(--accent-primary);
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+    background: var(--content-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.theme-toggle:hover {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+/* ========================================
+   Sidebar Navigation
+   ======================================== */
+.sidebar .top-row {
+    background: transparent;
+    box-shadow: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    height: 60px;
+    padding: 0 16px !important;
+}
+
+.sidebar .navbar-brand {
+    color: #ffffff;
+    font-size: 1.25rem;
+    letter-spacing: -0.5px;
+}
+
+.sidebar .navbar-brand small {
+    opacity: 0.6;
+    font-weight: 400;
+}
+
+.sidebar nav {
+    padding: 16px 0;
+}
+
+.sidebar .nav-item {
+    margin: 2px 0;
+}
+
+.sidebar .nav-link {
+    color: var(--sidebar-text);
+    padding: 12px 20px;
+    border-radius: var(--border-radius-sm);
+    margin: 0 12px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.sidebar .nav-link:hover {
+    background: var(--sidebar-hover);
+    color: var(--sidebar-text-active);
+}
+
+.sidebar .nav-link.active {
+    background: var(--sidebar-active);
+    color: var(--sidebar-text-active);
+}
+
+.sidebar .nav-link .bi {
+    font-size: 18px;
+    opacity: 0.8;
+}
+
+/* Sidebar Section Headers */
+.sidebar .px-3.py-2 small {
+    color: var(--sidebar-section);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* ========================================
+   Content Area
+   ======================================== */
+.content {
+    padding: 24px 32px !important;
+}
+
+/* ========================================
+   Cards - Modern Dashboard Style
+   ======================================== */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--card-border);
+    padding: 16px 20px;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-footer {
+    background: transparent;
+    border-top: 1px solid var(--card-border);
+    padding: 12px 20px;
+}
+
+/* ========================================
+   Stats Cards (Dashboard KPIs)
+   ======================================== */
+.stat-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    padding: 24px;
+    border: 1px solid var(--card-border);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card .stat-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.stat-card .stat-label {
+    color: var(--text-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.stat-card .stat-trend {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.stat-card .stat-trend.positive {
+    color: var(--accent-success);
+}
+
+.stat-card .stat-trend.negative {
+    color: var(--accent-danger);
+}
+
+/* ========================================
+   Buttons - Modern Style
+   ======================================== */
+.btn {
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    padding: 10px 18px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+.btn-primary:hover {
+    background: #3b5bdb;
+    border-color: #3b5bdb;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border-color: var(--accent-primary);
+    color: var(--accent-primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+}
+
+/* ========================================
+   Tables - Clean Style
+   ======================================== */
+.table {
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: var(--content-bg);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--card-border);
+    padding: 14px 16px;
+}
+
+.table tbody td {
+    padding: 16px;
+    border-bottom: 1px solid var(--card-border);
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background: var(--content-bg);
+}
+
+/* ========================================
+   Badges - Refined
+   ======================================== */
+.badge {
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* ========================================
+   Forms - Modern Inputs
+   ======================================== */
+.form-control,
+.form-select {
+    border: 1px solid var(--card-border);
+    border-radius: var(--border-radius-sm);
+    padding: 12px 16px;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.15);
+}
+
+.input-group-text {
+    background: var(--content-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text-muted);
+}
+
+/* ========================================
+   Search Bar - Enhanced
+   ======================================== */
+.search-bar {
+    background: var(--card-bg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.search-bar .form-control {
+    border: none;
+    font-size: 15px;
+    padding: 14px 20px;
+    background: var(--content-bg);
+}
+
+.search-bar .form-control:focus {
+    box-shadow: none;
+    background: var(--content-bg);
+}
+
+/* ========================================
+   Alerts - Dashboard Style
+   ======================================== */
+.alert {
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 16px 20px;
+}
+
+.alert-info {
+    background: rgba(6, 182, 212, 0.1);
+    color: #0891b2;
+}
+
+.alert-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+}
+
+.alert-warning {
+    background: rgba(245, 158, 11, 0.1);
+    color: #d97706;
+}
+
+.alert-danger {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+}
+
+/* ========================================
+   Progress Bars
+   ======================================== */
+.progress {
+    height: 6px;
+    border-radius: 10px;
+    background: var(--content-bg);
+}
+
+.progress-bar {
+    border-radius: 10px;
+}
+
+/* ========================================
+   Utility Classes
+   ======================================== */
+.rounded-pill-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4c6fff, #6b8cff);
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #22c55e, #4ade80);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f59e0b, #fbbf24);
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #ef4444, #f87171);
+}
+
+/* ========================================
+   Responsive
+   ======================================== */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        width: 260px;
+        transform: translateX(0);
+    }
+
+    main {
+        margin-left: 0;
+    }
+
+    .content {
+        padding: 16px !important;
+    }
+}
+
+/* ========================================
+   Animation Classes
+   ======================================== */
+.fade-in {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.3s ease;
+}

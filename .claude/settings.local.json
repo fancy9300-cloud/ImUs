@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run:*)",
+      "Bash(curl:*)",
+      "Bash(powershell.exe -Command \"try { $r = Invoke-WebRequest -Uri ''http://localhost:5050'' -UseBasicParsing -TimeoutSec 5; Write-Host Status: $r.StatusCode; Write-Host Length: $r.Content.Length } catch { Write-Host $_.Exception.Message }\")",
+      "WebFetch(domain:localhost)"
+    ]
+  }
+}

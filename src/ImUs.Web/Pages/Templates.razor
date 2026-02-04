@@ -1,0 +1,134 @@
+@page "/templates"
+
+<PageTitle>Template Library - ImUs</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="mb-1">Template Library</h3>
+        <p class="text-muted mb-0">Soluzioni pre-costruite generate dai progetti enterprise del team ImUs</p>
+    </div>
+    <button class="btn btn-outline-primary">Pubblica Template</button>
+</div>
+
+<!-- Filter -->
+<div class="d-flex gap-2 mb-4">
+    @foreach (var cat in new[] { "Tutti", "Computer Vision", "IoT", "Analytics", "Robotics" })
+    {
+        <button class="btn btn-sm @(_filter == cat ? "btn-primary" : "btn-outline-secondary")"
+                @onclick="() => _filter = cat">@cat</button>
+    }
+</div>
+
+<div class="row">
+    @foreach (var t in FilteredTemplates)
+    {
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <span class="badge bg-@t.CategoryColor mb-2">@t.Category</span>
+                        <div class="text-end">
+                            @if (t.IsNew)
+                            {
+                                <span class="badge bg-danger">NEW</span>
+                            }
+                            <span class="badge bg-light text-dark border">v@t.Version</span>
+                        </div>
+                    </div>
+                    <h5 class="card-title mt-2">@t.Name</h5>
+                    <p class="card-text text-muted">@t.Description</p>
+
+                    <div class="row text-center my-3 py-2 bg-light rounded">
+                        <div class="col-4">
+                            <strong>@t.Downloads</strong>
+                            <br /><small class="text-muted">Downloads</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>@t.Rating</strong>
+                            <br /><small class="text-muted">Rating</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>@t.Price</strong>
+                            <br /><small class="text-muted">Licenza</small>
+                        </div>
+                    </div>
+
+                    <p class="small mb-1"><strong>Stack:</strong></p>
+                    <div class="d-flex flex-wrap gap-1 mb-3">
+                        @foreach (var s in t.Stack)
+                        {
+                            <span class="badge bg-light text-dark border">@s</span>
+                        }
+                    </div>
+
+                    <p class="small mb-1"><strong>Hardware compatibile:</strong></p>
+                    <div class="d-flex flex-wrap gap-1">
+                        @foreach (var h in t.Hardware)
+                        {
+                            <span class="badge bg-dark">@h</span>
+                        }
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-primary flex-fill">Documentazione</button>
+                    <button class="btn btn-sm btn-primary flex-fill">Usa Template</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Circolo Virtuoso -->
+<div class="card bg-light border-0 mt-3 mb-4">
+    <div class="card-body text-center py-4">
+        <h5>Il Circolo Virtuoso dei Template</h5>
+        <div class="d-flex justify-content-center align-items-center gap-3 mt-3 flex-wrap">
+            <span class="badge bg-primary p-2">Team Interno fa progetto enterprise</span>
+            <span class="bi bi-arrow-right"></span>
+            <span class="badge bg-success p-2">Genera template riutilizzabili</span>
+            <span class="bi bi-arrow-right"></span>
+            <span class="badge bg-warning text-dark p-2">Template su piattaforma</span>
+            <span class="bi bi-arrow-right"></span>
+            <span class="badge bg-info p-2">Sviluppatori li usano</span>
+            <span class="bi bi-arrow-right"></span>
+            <span class="badge bg-danger p-2">Feedback migliora tutto</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _filter = "Tutti";
+
+    record TemplateCard(string Name, string Category, string CategoryColor, string Description, string[] Stack, string[] Hardware, string Version, int Downloads, string Rating, string Price, bool IsNew);
+
+    private IEnumerable<TemplateCard> FilteredTemplates =>
+        _filter == "Tutti" ? _templates : _templates.Where(t => t.Category == _filter);
+
+    private List<TemplateCard> _templates = new()
+    {
+        new("Shelf Monitoring", "Computer Vision", "danger",
+            "Rilevamento scaffali vuoti e prodotti fuori posto con modello YOLO pre-addestrato su dataset GDO.",
+            new[]{"Python", "YOLO", "FastAPI", "Docker"}, new[]{"NVIDIA Jetson", "Axis"}, "2.1", 156, "4.8", "€2.500", false),
+        new("Fridge Temperature Monitor", "IoT", "success",
+            "Pipeline completa per acquisizione temperature da sensori, storage time-series e alert automatici.",
+            new[]{"C#", "MQTT", "InfluxDB", "Grafana"}, new[]{"Sensirion STS40", "ESP32"}, "1.4", 89, "4.9", "€1.200", false),
+        new("People Counter", "Computer Vision", "danger",
+            "Conteggio persone in/out con telecamere. Include dashboard real-time e report giornalieri.",
+            new[]{"Python", "OpenCV", "React", "PostgreSQL"}, new[]{"Axis P3265", "NVIDIA Jetson"}, "3.0", 234, "4.7", "€3.000", true),
+        new("Predictive Maintenance", "Analytics", "warning",
+            "Modello ML per previsione guasti su impianti di refrigerazione basato su dati vibrazioni e temperatura.",
+            new[]{"Python", "scikit-learn", "FastAPI", "Docker"}, new[]{"Sensirion", "Vibration Sensors"}, "1.0", 42, "4.5", "€5.000", true),
+        new("Digital Price Tag Sync", "IoT", "success",
+            "Sincronizzazione automatica prezzi tra ERP e etichette elettroniche VusionGroup.",
+            new[]{"C#", ".NET 8", "REST API", "SQL Server"}, new[]{"VusionGroup Rail", "VusionSpot"}, "1.2", 67, "4.6", "€800", false),
+        new("Store Heatmap", "Analytics", "warning",
+            "Generazione heatmap dal flusso clienti per ottimizzare layout negozio.",
+            new[]{"Python", "OpenCV", "D3.js", "PostgreSQL"}, new[]{"Axis M3088-V", "NVIDIA Jetson"}, "1.1", 78, "4.4", "€2.000", false),
+        new("Robot Fleet Manager", "Robotics", "primary",
+            "Dashboard di gestione flotta robot Pudu con scheduling missioni e monitoraggio batteria.",
+            new[]{"TypeScript", "React", "Node.js", "WebSocket"}, new[]{"Pudu BellaBot", "Pudu CC1"}, "1.0", 23, "4.3", "€3.500", true),
+        new("Anomaly Detection", "Analytics", "warning",
+            "Rilevamento anomalie su dati IoT con autoencoder. Alert automatici su deviazioni.",
+            new[]{"Python", "TensorFlow", "Kafka", "Grafana"}, new[]{"Qualsiasi sensore IoT"}, "1.0", 35, "4.5", "€4.000", true)
+    };
+}
